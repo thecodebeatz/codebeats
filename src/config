@@ -1,0 +1,4 @@
+export const AWS_KEY = "";
+export const AWS_SECRET = "";
+export const BLOG_INTRO = "";
+export const BLOG_TITLE = "";
