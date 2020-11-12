@@ -1,5 +1,8 @@
 import { combineReducers } from 'redux';
+import blogfeedReducer from './blogfeedReducer';
+import blogpostReducer from './blogpostReducer';
 
 export default combineReducers({
-    dummy: 'dummy'
+    blogfeed: blogfeedReducer,
+    blogpost: blogpostReducer
 });

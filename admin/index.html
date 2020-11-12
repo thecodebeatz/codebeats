@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Code Beats Admin</title>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="summernote.min.css" rel="stylesheet">
+        <style>
+        *{box-sizing:border-box}html{line-height:1.6}body{margin:0;font-family:sans-serif;background:#FFF;color:#666}.app-header h1,.app-header h2,.app-header h3,.app-header h4,.app-header h5,.app-header h6{color:#FFF}h1,h2,h3,h4,h5,h6{color:#222}.app-header p{color:#999}a{color:#f04859;transition:color .35s;text-decoration:none}a:hover{color:#222}code{font-family:monospace,monospace;font-size:1em;color:#000}pre{overflow:auto}pre code{font-size:.8em}::selection{background:rgba(175,186,196,.25)}::-moz-selection{background:rgba(175,186,196,.25)}.app-header{padding:2.5em;background:#242930;text-align:center}.app-container{padding:2.5rem}.app-header-social{font-size:2em;color:#fff}.app-header-social a{margin:0 .1em;color:#666}@media(min-width:940px){.app-header{position:fixed;top:0;left:0;width:20rem;min-height:100vh}.app-container{max-width:65rem}}.error-404{text-align:center}.error-404-title{text-transform:uppercase}.icon{display:inline-block;width:1em;height:1em;vertical-align:-.125em}.pagination{display:block;list-style:none;padding:0;font-size:.8em;text-align:center;margin:3em 0}.page-item{display:inline-block}.page-item .page-link{display:block;padding:.285em .8em}.page-item.active .page-link{color:#222;border-radius:2em;background:#f04859}.post-title{color:#222}.post-content pre{border-left:.4em solid rgba(87,204,138,.8);padding-left:1em}.post-content img{max-width:100%}.post-meta{font-size:.8em}.posts-list{padding:0}.posts-list-item{list-style:none;padding:.4em 0}.posts-list-item:not(:last-child){border-bottom:1px dashed rgba(255,255,255,.3)}.posts-list-item-description{display:block;font-size:.8em}.tag{display:inline-block;margin-right:.2em;padding:0 .6em;font-size:.9em;border-radius:.2em;white-space:nowrap;background:rgba(255,255,255,.1);transition:color .35s,background .35s}.tag:hover{transition:color .25s,background .05s;background:rgba(255,255,255,.3)}.tags-list{padding:0}.tags-list-item{list-style:none;padding:.4em 0}.tags-list-item:not(:last-child){border-bottom:1px dashed rgba(255,255,255,.3)}@media(min-width:450px){.tags-list{display:flex;flex-wrap:wrap}.tags-list-item{width:calc(50% - 1em)}.tags-list-item:nth-child(even){margin-left:1em}.tags-list-item:nth-last-child(2){border:none}}
+        </style>
+    </head>
+    <body>
+        <main class="app-container">
+            <article>
+                <h1></h1>
+                <ul class="posts-list" id="posts-list"></ul>
+                <a href="admin_post.html">+ New Blogpost</a>
+                <br /><br />
+                <button type="button" onclick="javacript:createSiteMap()">Update SiteMap</button>
+            </article>
+        </main>
+  
+        <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.16.min.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/admin.js"></script>
+    </body>
+</html>
