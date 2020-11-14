@@ -12,7 +12,7 @@ const Header = () => {
                         <img src={CodeBeatsLogo} alt="React Logo" />
                     </div>
                 </Link>
-                <Link to="/"><h1 id="title">{BLOG_TITLE}</h1></Link>
+                <Link to="/"><span id="site_name">{BLOG_TITLE}</span></Link>
                 <p>{BLOG_INTRO}</p>
                 <div className="app-header-social">
                     <a target="_blank" href="https://github.com/thecodebeatz" rel="noreferrer noopener">
