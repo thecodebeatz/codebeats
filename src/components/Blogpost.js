@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { getBlogpostContent } from '../actions';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { dateToNiceString } from '../utils';
 import HtmlHead from './HtmlHead';
 import { 
@@ -18,6 +18,9 @@ class Blogpost extends React.Component {
     }
 
     render() {
+            if (this.props.blogpost.notFound == true) {
+                return <Redirect to="/e404"></Redirect>; // redirect to 404
+            }
             if (this.props.blogpost.postid) {
                 //console.log(this.props.blogpost.postid.S);
                 return (

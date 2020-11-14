@@ -17,3 +17,7 @@ export const dateToNiceString = (myDate) => {
     // const minutes = myDate.getMinutes();
     return month[myDate.getMonth()]+" "+myDate.getDate()+", "+myDate.getFullYear();
 };
+
+export const dateToUnix = (dateString) => {
+    return new Date(dateString).getTime();
+}
