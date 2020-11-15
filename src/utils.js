@@ -1,3 +1,10 @@
+/**
+ * @function dateToNiceString
+ * Converts date timestamp to format Mon DD, YYYY
+ *  
+ * @param {string} myDate a string representing a timestamp.
+ * @returns {string} A string representation of the date following the format Mon DD, YYYY (e.g. Jan 1, 2021)
+ */
 export const dateToNiceString = (myDate) => {
     myDate = new Date(myDate);
     const month=new Array();
@@ -18,6 +25,13 @@ export const dateToNiceString = (myDate) => {
     return month[myDate.getMonth()]+" "+myDate.getDate()+", "+myDate.getFullYear();
 };
 
+/**
+ * @function dateToUnix
+ * Converts date timestamp to Unix format
+ *  
+ * @param {string} dateString a string representing a timestamp.
+ * @returns {number} Unix time representation of the provided timestamp
+ */
 export const dateToUnix = (dateString) => {
     return new Date(dateString).getTime();
 }

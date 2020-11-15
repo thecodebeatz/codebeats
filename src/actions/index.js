@@ -9,7 +9,14 @@ export const fetchBlogPosts = () => async (dispatch) => {
 
     let params = {
         TableName: AWS_DYNAMO_TABLE,
-        ProjectionExpression: "postid, title, post_folder, post_body, post_date",
+        ProjectionExpression: "title, post_folder, post_body, post_date, image, summary, post_tags, #pb",
+        FilterExpression: "#pb = :published",
+        ExpressionAttributeNames: {
+            "#pb": "published",
+        },
+        ExpressionAttributeValues: {
+             ":published": true,
+        }    
     };
 
     const blogposts = await dynamodbDocClient.scan(params).promise();
@@ -25,7 +32,7 @@ export const getBlogpostContent = (postid) => async (dispatch) => {
     let paramss = {
         TableName: AWS_DYNAMO_TABLE,
         Key:{
-            "postid": { 'S' : postid }
+            "post_folder": { 'S' : postid }
         }
     };
 

@@ -1,6 +1,0 @@
-// Rename this file to config.js
-const AWS_REGION = "";
-const AWS_ACCESS_KEY = "";
-const AWS_SECRET_KEY = "";
-const AWS_S3_BUCKET = "";
-const AWS_DYNAMO_TABLE = "";

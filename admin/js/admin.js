@@ -15,7 +15,7 @@ function scanData() {
   const params = {
     TableName: AWS_DYNAMO_TABLE,
     ProjectionExpression:
-      "postid, title, post_folder, post_body, post_date, date_modified",
+      "title, post_folder, post_body, post_date, date_modified, published",
   };
 
   docClient.scan(params, onScan);
@@ -33,25 +33,24 @@ function scanData() {
 
       data.Items.forEach(function (Blogpost) {
         posts +=
-          '<li class="posts-list-item">          <a class="posts-list-item-title" href="admin_post.html?article=' +
+          `<li class="posts-list-item">${Blogpost.published ? "✅" : "⏲"} <a class="posts-list-item-title" href="admin_post.html?id=` +
           Blogpost.post_folder +
-          "&id=" +
-          Blogpost.postid +
           '">' +
           Blogpost.title +
           "</a> | <a onclick=\"delete_post('" +
-          Blogpost.postid +
+          Blogpost.post_folder +
           '\')" href="#">[delete]</a>           <span class="posts-list-item-description">📅 created: ' +
           dateToNiceString(Blogpost.post_date) +
           " - modified: " +
           dateToNiceString(Blogpost.date_modified) +
           "          </span>        </li>";
       });
+
       document.getElementById("posts-list").innerHTML += posts;
-      params.ExclusiveStartKey = data.LastEvaluatedKey;
     }
   }
 }
+window.onload = scanData();
 
 function createSiteMap() {
   let r = confirm("Sure?");
@@ -62,7 +61,7 @@ function createSiteMap() {
     const params = {
       TableName: AWS_DYNAMO_TABLE,
       ProjectionExpression:
-        "postid, title, post_folder, post_body, date_modified",
+        "title, post_folder, post_body, date_modified",
     };
 
     docClient.scan(params, onScan);
@@ -81,7 +80,7 @@ function createSiteMap() {
           "</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>";
         data.Items.forEach(function (Blogpost) {
           posts +=
-            `<url><loc>${SITE_CANONICAL_URL}${BLOG_SEO_SUBFOLDER}/${Blogpost.post_folder}/${Blogpost.postid}</loc><lastmod>${Blogpost.date_modified}</lastmod><changefreq>monthly</changefreq></url>`;
+            `<url><loc>${SITE_CANONICAL_URL}${BLOG_SEO_SUBFOLDER}/${Blogpost.post_folder}</loc><lastmod>${Blogpost.date_modified}</lastmod><changefreq>monthly</changefreq></url>`;
         });
         posts += "</urlset>";
         console.log(posts);
@@ -120,7 +119,7 @@ function delete_post(id) {
     const params = {
       TableName: table,
       Key: {
-        postid: id,
+        post_folder: id,
       },
     };
 
@@ -193,5 +192,3 @@ function error(message) {
     300
   );
 }
-
-window.onload = scanData();

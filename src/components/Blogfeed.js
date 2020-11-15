@@ -26,12 +26,25 @@ class Blogfeed extends React.Component {
         });
 
         return BlogpostOrdered.map(blogpost => {
-            return (
-                <li className="posts-list-item" key={blogpost.postid}>
-                    <Link className="posts-list-item-title" to={`/${BLOG_SEO_SUBFOLDER}/${blogpost.post_folder}/${blogpost.postid}`}>{blogpost.title}</Link>
-                    <span className="posts-list-item-description">📅 {dateToNiceString(blogpost.post_date)}</span>
-                </li>
-            );
+            return ( 
+                    
+                        <div className="card-grid-space" key={blogpost.post_folder}>
+                            <Link className="card" to={`/${BLOG_SEO_SUBFOLDER}/${blogpost.post_folder}`} style={{"--bg-img": `url(${blogpost.image})`}}>
+                                <div>
+                                    <h2>{blogpost.title}</h2>
+                                    <p>{blogpost.summary}</p>
+                                    <div className="date">📅 {dateToNiceString(blogpost.post_date)}</div>
+                                    {
+                                    // TODO: Need to fix styling for tags.
+                                    /*                                    
+                                    <div className="tags">
+                                        {blogpost.post_tags.split(",").map(tag => <div className="tag">{tag}</div>)}
+                                    </div> */
+                                    }
+                                </div>
+                            </Link>
+                        </div>
+                );
         });
     }
 
@@ -39,9 +52,9 @@ class Blogfeed extends React.Component {
         return (
             <main className="app-container">
                 <HtmlHead title={SITE_TITLE} description={SITE_META_DESCRIPTION} author={SITE_AUTHOR} canonicalUrl={SITE_CANONICAL_URL} />
-                <h1>Blog post feed</h1>
+                <h1>{BLOG_TITLE} blog post feed</h1>
                 <article>
-                    <ul className="posts-list" id="posts-list">{this.renderList()}</ul>
+                <section className="cards-wrapper">{this.renderList()}</section>
                 </article>
             </main>
         );

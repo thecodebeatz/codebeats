@@ -13,19 +13,20 @@ import {
 class Blogpost extends React.Component {
 
     componentDidMount() {
-        const postid = this.props.match.params.blogpostid;
-        this.props.getBlogpostContent(postid);
+
+        const post_folder = this.props.match.params.post_folder;
+        this.props.getBlogpostContent(post_folder);
     }
 
     render() {
             if (this.props.blogpost.notFound == true) {
                 return <Redirect to="/e404"></Redirect>; // redirect to 404
             }
-            if (this.props.blogpost.postid) {
+            if (this.props.blogpost.post_folder) {
                 //console.log(this.props.blogpost.postid.S);
                 return (
                     <main className="app-container">
-                        <HtmlHead title={this.props.blogpost.title.S} description={SITE_META_DESCRIPTION} author={SITE_AUTHOR} canonicalUrl={SITE_CANONICAL_URL+BLOG_SEO_SUBFOLDER+`/${this.props.blogpost.post_folder.S}/${this.props.blogpost.postid.S}`} />
+                        <HtmlHead title={this.props.blogpost.title.S} description={SITE_META_DESCRIPTION} author={SITE_AUTHOR} canonicalUrl={SITE_CANONICAL_URL+BLOG_SEO_SUBFOLDER+`/${this.props.blogpost.post_folder.S}`} />
                         <article className="posts">
                             <header className="post-header">
                                 <h1 className="post-title">{this.props.blogpost.title.S}</h1>
