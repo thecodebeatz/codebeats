@@ -1,7 +1,8 @@
 /**
-* Rename this file from config.rename.js to config.js
+* ! Rename this file from config.rename.js to config.js
+*
 * * Update this file with your:
-* * - AWS_REGION               =>   AWS region where your DynamoDB table and bucket are.
+* * - AWS_REGION               =>   AWS region where your DynamoDB table and S3 bucket are located (e.g. us-east-1)
 * ! - AWS_ACCESS_KEY           =>   AWS access keys of user with READ ONLY access to the DynamoDB table and S3 bucket
 * ! - AWS_SECRET_KEY           =>   AWS secret keys of user with READ ONLY access to the DynamoDB table and S3 bucket
 * * - AWS_DYNAMO_TABLE         =>   DynamoDB table where all your blogpost data will be stored

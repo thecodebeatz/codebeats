@@ -5,6 +5,11 @@ import {
 } from './types';
 import { AWS_DYNAMO_TABLE } from '../config.js';
 
+/**
+ * @function fetchBlogPosts
+ * Action that connects to dynamodb and fetches all published blog posts.
+ * 
+ */
 export const fetchBlogPosts = () => async (dispatch) => {
 
     let params = {
@@ -27,6 +32,13 @@ export const fetchBlogPosts = () => async (dispatch) => {
     })
 }
 
+/**
+ * @function getBlogpostContent
+ * Fetch a specific blog post data from DynamoDB.
+ *
+ * @param {string} postid - unique id of the post to get.
+ * 
+ */
 export const getBlogpostContent = (postid) => async (dispatch) => {
 
     let paramss = {

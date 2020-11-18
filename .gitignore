@@ -25,3 +25,5 @@ yarn-error.log*
 # configfile
 /src/config.js
 /admin/js/config.js
+
+/src/assets/codebeats_logo_own.svg

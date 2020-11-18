@@ -24,4 +24,4 @@ const AWS_S3_BUCKET = "";
 const AWS_S3_BUCKET_SUBFOLDER = "posts/";
 const AWS_DYNAMO_TABLE = "";
 const BLOG_SEO_SUBFOLDER = "";
-const SITE_CANONICAL_URL = "";
+const SITE_CANONICAL_URL = "";  // plese put a slash at the end of the canonical URL (e.g., https://website.com/)

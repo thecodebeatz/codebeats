@@ -1,3 +1,8 @@
+/**
+ * @file component used to dynamically update site metadata.
+ *
+ */
+
 import React from 'react';
 import { Helmet } from 'react-helmet';
 

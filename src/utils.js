@@ -7,7 +7,7 @@
  */
 export const dateToNiceString = (myDate) => {
     myDate = new Date(myDate);
-    const month=new Array();
+    const month=[];
     month[0]="Jan";
     month[1]="Feb";
     month[2]="Mar";

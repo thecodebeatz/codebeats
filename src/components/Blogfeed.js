@@ -1,3 +1,10 @@
+/**
+ * @file contains blog feed component.
+ * 
+ * Blog post feed is shown. Blog post list and data taken from blogfeed reducer.
+ * Uses HtmlHead component to load SEO metadata into <meta> tag.
+ * 
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { fetchBlogPosts } from '../actions';
@@ -21,6 +28,8 @@ class Blogfeed extends React.Component {
     renderList() {
 
         let BlogpostOrdered = this.props.blogfeed;
+
+        // Order blog pots by publication date, desc order.
         BlogpostOrdered.sort(function(a, b) {
             return dateToUnix(b.post_date) - dateToUnix(a.post_date);
         });

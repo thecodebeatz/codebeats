@@ -1,3 +1,10 @@
+/**
+ * @file contains main application component.
+ * 
+ * Blog post header/sidebar always shown. Content shown can edither be blog post feed or a single blog post.
+ * Connection to Google Tag Manager is made.
+ * 
+ */
 import React from 'react';
 import {BrowserRouter, Route } from 'react-router-dom';
 import Header from './Header'

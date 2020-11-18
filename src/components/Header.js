@@ -1,3 +1,7 @@
+/**
+ * @file Renders website header/sidebar
+ *
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CodeBeatsLogo from '../assets/codebeats_logo.svg';

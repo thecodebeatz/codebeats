@@ -1,7 +1,8 @@
 /**
  * This file is to be imported in ../admin_post.html which is the blog post editor which allows to create or editing blog posts.
  * ../config.js must also be imported in ../admin_post.html since it contains the definitions of some constants used in this file such as AWS keys (e.g. AWS_ACCESS_KEY)
- * Includes all the functions used by the blogpost editor, such as:
+ * 
+ * @file This file includes all the functions used by the blogpost editor, such as:
  * - Connectivity to AWS DynamoDB and S3
  * - Retreiving blog post content from DynamoDB for blog post edition
  * - Uploading files and images to AWS S3
@@ -14,7 +15,7 @@
  *
  * @requires config.js
  * @requires {@link https://code.jquery.com/jquery-3.5.1.min.js|jquery}
- * @see {@link https://summernote.org/|GitHub}
+ * @requires {@link https://summernote.org/|GitHub}
  */
 
 /** Configure AWS parameters */
@@ -25,9 +26,10 @@ AWS.config.update({
 });
 
 /** Global variables used by several functions */
-var selectedPhotoId = "1";
-var selectedPhoto = "";
-var selectedPhotoUrl = "";
+var selectedFileId = "1";
+var selectedFile = "";
+var selectedFileUrl = "";
+var selectedFileIsImage = null;
 var albumName = "";
 
 /** Configure AWS objects for DynamoDB and S3  */
@@ -44,6 +46,11 @@ var s3 = new AWS.S3({
  * Whenever blog post editor is called, this funciton is called.
  * In case user wants to edit instead of creating a new blog post, data is retreived
  * from DynamoDB, and blog post data blog post editor HTML form fields (with Blogpost's title, summary, content, etc.).
+ * 
+ * * Depends on global constants (see config.js file).
+ * * Depends on global variables (loaded at the beginning of this file):
+ * *   - "docClient" -> DynamoDB object to perform get() requests to DynamoDB.
+ * 
  */
 function readItem() {
   if (id != false) {
@@ -84,6 +91,12 @@ function readItem() {
             </div>
           </form>`
         );
+
+        if (data.Item.image != null) {
+          $("#featuredImageSection").append(`<img src="${data.Item.image}" style="width:auto;height:250px" />`);
+        }
+
+
       }
     });
   }
@@ -96,6 +109,7 @@ window.onload = readItem();
  * Shows a successful operation message at the top of the blogpost editor.
  *
  * @param {string} message - message to be displayed
+ * 
  */
 function success(message) {
   $(".post-header").prepend(
@@ -114,6 +128,7 @@ function success(message) {
  * Shows a error message at the top of the blogpost editor.
  *
  * @param {string} message - message to be displayed
+ * 
  */
 function error(message) {
   $(".post-header").prepend(
@@ -131,6 +146,11 @@ function error(message) {
  * @function submit
  * Create or edit blog post. Sends form data to AWS DynamoDB.
  * If blog post creation/update is sucessful, upload attached images and files to AWS S3. by calling {@link addPhoto}
+ * 
+ * * Depends on global constants (see config.js file).
+ * * Depends on global variables (loaded at the beginning of this file):
+ * *   - "docClient" -> DynamoDB object to perform update() requests to DynamoDB.
+ * * Depends on toSEOUrl funciton
  *
  * @param {string} message - message to be displayed
  */
@@ -211,13 +231,12 @@ function submit() {
  * @function setAsFeaturedImage
  * Set selected image as blog post's featured image on DynamoDB record.
  * 
+ * * Depends on global constants (see config.js file).
  * * Depends on global variables (loaded at the beginning of this file):
  * *   - "albumName" -> Stores blog post folder name.
  * *   - "s3" -> Stores AWS S3 object.
- * *
- * * Depends on global constants:
- * *   - AWS_S3_BUCKET -> see config.js
- * *   - AWS_S3_BUCKET_SUBFOLDER -> see config.js
+ * *   - "docClient" -> DynamoDB object to perform update() requests to DynamoDB.
+ * * Depends on resizeImage function
  *
  */
 function setAsFeaturedImage() {
@@ -254,7 +273,7 @@ function setAsFeaturedImage() {
       function (data) {
         // Whenever a file is uploaded, update progress message at the top of the blog post editor.
         success("Featured image successfully uploaded.");
-
+        console.log(fileIsImage);
         const uploadedImageURL = data.Location;
 
         // Once the image is uploaded, let's also update the blog record to specify the featured image's URL.
@@ -293,9 +312,8 @@ function setAsFeaturedImage() {
  * @function addPhoto
  * Uploads ALL selected images and photos by user to AWS S3
  * 
- * * Depends on global constants:
- * *   - AWS_S3_BUCKET -> see config.js
- * *   - AWS_S3_BUCKET_SUBFOLDER -> see config.js
+ * * Depends on global constants (see config.js file).
+ * * Depends on toSEOUrl function
  * 
  * @param {string} albumName - Name of the "folder" in S3 where photos and pictures will be uploaded.
  * 
@@ -351,12 +369,12 @@ function addPhoto(albumName) {
  * Thumbnails are clickable/selectable. Two buttons displayed at the bottom of the image 
  * that allows to either insert an image to the WYSIWYG editor or to delete them from AWS S3.
  * 
- * * Depends on global constants:
- * *   - AWS_S3_BUCKET -> see config.js
- * *   - AWS_S3_BUCKET_SUBFOLDER -> see config.js
+ * * Depends on global constants (see config.js file).
+ * * Depends on global variables (loaded at the beginning of this file):
  * *   - "s3" -> Stores AWS S3 object.
  *
  * @param {string} albumName - Name of the "folder" in S3 where photos and pictures to display are located.
+ * 
  */
 function viewBlogPostPhotos(albumName) {
   const albumPhotosKey = AWS_S3_BUCKET_SUBFOLDER + albumName + "/";
@@ -367,36 +385,44 @@ function viewBlogPostPhotos(albumName) {
       );
     }
 
-    // "this" represent the response from AWS
-    const href = this.request.httpRequest.endpoint.href;
-    const bucketUrl = href + AWS_S3_BUCKET + "/";
-
     let photos = data.Contents.map(function (photo) {
       const photoKey = photo.Key;
-      const photoUrl = bucketUrl + encodeURIComponent(photoKey);
-      // Use photoKey.hashCode() to generate a unique number for each image or file
-      // This id will be used later through the DOM
-      return (
-        '<img style="width:100px;height:auto;margin:1em" class="thumbnail float-left" id="' +
-        photoKey.hashCode() +
-        '" title="' +
-        photoKey +
-        '" src="' +
-        photoUrl +
-        '" onclick="selectPhoto(\'' +
-        photoKey +
-        "','" +
-        photoUrl +
-        "')\" />"
-      );
-    });
+      const photoUrl = SITE_CANONICAL_URL + encodeURIComponent(photoKey);
+      fileIsImage(photoKey);
 
+      if (fileIsImage(photoKey)) {
+        // Use photoKey.hashCode() to generate a unique number for each image or file
+        // This id will be used later through the DOM
+        return (
+            `<img 
+            style="width:100px;height:auto;margin:1em" 
+            class="thumbnail float-left" 
+            id="${photoKey.hashCode()}" 
+            title="${photoKey}" 
+            src="${photoUrl}"
+            onclick="javascript:selectFile('${photoKey}','${photoUrl}',true)" />`
+        );
+      } else {
+        return (
+          `<span class="fileAttachment">
+            <img 
+              style="width:100px;height:auto;margin:1em" 
+              class="thumbnail float-left" 
+              id="${photoKey.hashCode()}" 
+              title="${photoKey}" 
+              src="attachment.png"
+              onclick="javascript:selectFile('${photoKey}','${photoUrl}',false)" />
+              ${photoKey}
+            </span>`
+        );
+      }
+    });
     photos = `
-    <div style="display:flex;align-items:center;margin:2em 0 0.5em 0;width:100%;flex-wrap:wrap;border:#f04859 1px solid">
+    <div style="display:flex;align-items:center;margin:0 0 0.5em 0;width:100%;flex-wrap:wrap;border:#f04859 2px solid">
     ${photos.join(" ")}
     </div>
     <div class="form-group" style="padding:1em;display:flex;align-items:center;margin:0.5em 0 2em 0;width:100%;flex-wrap:wrap;border:#f04859 1px solid">
-        <input type="button" value="Insert Pic." onclick="javascript:insertPhoto()" type="submit" class="btn btn-primary" style="margin:0.5em;border:none" />
+        <input type="button" value="Insert Pic." onclick="javascript:insertFile()" type="submit" class="btn btn-primary" style="margin:0.5em;border:none" />
         <input type="button" value="DELETE" onclick="javascript:deletePhoto()" type="submit" class="btn btn-primary" style="background-color:#f04859;margin:0.5em;border:none" />
     </div>`;
     document.getElementById("photoAlbum").innerHTML = photos;
@@ -411,53 +437,64 @@ function viewBlogPostPhotos(albumName) {
 }
 
 /**
- * @function selectPhoto
- * Whenever a user clicks a photo or file, its AWS S3 key is saved in the global variable selectedPhoto
- * Similarly, its URL is saved in the global variable selectedPhotoUrl.
+ * @function selectFile
+ * Whenever a user clicks a photo or file, its AWS S3 key is saved in the global variable selectedFile
+ * Similarly, its URL is saved in the global variable selectedFileUrl.
  * 
  * * Depends on global variables (loaded at the beginning of this file):
- * *   - "selectedPhotoUrl" -> Temporarily stores the URL of the clicked photograph to later be either inserted
+ * *   - "selectedFileUrl" -> Temporarily stores the URL of the clicked photograph to later be either inserted
  * *                         to the WYSIWYG editor or be deleted from AWS S3.
- * *   - "selectedPhotoId" -> Stores tempory DOM id of the thumbnail selected.
- * *   - "selectedPhoto" -> Store temporary AWS S3 file key of the selected thumbnail.
+ * *   - "selectedFileId" -> Stores tempory DOM id of the thumbnail selected.
+ * *   - "selectedFileIsImage" -> Indicates whether selected file is an image or not.
+ * *   - "selectedFile" -> Store temporary AWS S3 file key of the selected thumbnail.
  *
- * @param {string} photoKey - AWS S3 key of the image or file clicked.
- * @param {string} photoUrl - AWS URL of the image or file clicked.
+ * @param {string} fileKey - AWS S3 key of the image or file clicked.
+ * @param {string} fileUrl - AWS URL of the image or file clicked.
+ * 
  */
-function selectPhoto(photoKey, photoUrl) {
+function selectFile(fileKey, fileUrl, fileIsImage) {
   $(".thumbnail").css("border", "");
-  selectedPhoto = photoKey;
-  selectedPhotoUrl = photoUrl;
-  selectedPhotoId = photoKey.hashCode();
-  $(`#${selectedPhotoId}`).css("border", "solid 6px #f04859");
+  selectedFile = fileKey;
+  selectedFileUrl = fileUrl;
+  selectedFileId = fileKey.hashCode();
+  selectedFileIsImage = fileIsImage;
+  $(`#${selectedFileId}`).css("border", "solid 6px #f04859");
 }
 
 /**
- * @function insertPhoto
+ * @function insertFile
  * Adds whichever image or photo is currently selected to the WYSIWYG editor
- * To do this reads the value of global variable selectedPhotoUrl
+ * To do this reads the value of global variable selectedFileUrl
  * 
  * * Depends on global variables (loaded at the beginning of this file):
- * *   - "selectedPhotoUrl" -> Temporarily stores the URL of the clicked photograph to later be either inserted
+ * *   - "selectedFileUrl" -> Temporarily stores the URL of the clicked photograph to later be either inserted
  * *                           to the WYSIWYG editor or be deleted from AWS S3.
+ * *   - "selectedFileIsImage" -> Indicates whether selected file is an image or not.
  *
  */
-function insertPhoto() {
-  $("#editor").summernote(
-    "pasteHTML",
-    '<img src="' + selectedPhotoUrl + '" />'
-  );
+function insertFile() {
+  if (selectedFileIsImage === true) {
+    $("#editor").summernote(
+      "pasteHTML",
+      '<img src="' + selectedFileUrl + '" />'
+    );
+  } else {
+    $("#editor").summernote(
+      "pasteHTML",
+      '<p><a href="' + selectedFileUrl + '">📎 Download <strong>'+selectedFile+'</strong></a></p>'
+    );
+  }
 }
 
 /**
  * @function deletePhoto
  * Deletes whichever image or photo is currently selected from AWS S3 bucket.
- * To do this reads the value of global variable selectedPhoto.
+ * To do this reads the value of global variable selectedFile.
  * Once deleted from S3, removes photo from screen
  * 
  * * Depends on global variables (loaded at the beginning of this file):
- * *   - "selectedPhotoUrl" -> Temporarily stores the URL of the clicked photograph to later be either inserted
- * *                           to the WYSIWYG editor or be deleted from AWS S3.
+ * *   - "selectedFileId" -> Stores tempory DOM id of the thumbnail selected.
+ * *   - "selectedFile" -> Store temporary AWS S3 file key of the selected thumbnail.
  * *   - "s3" -> Stores AWS S3 object.
  *
  */
@@ -465,7 +502,7 @@ function deletePhoto() {
   let r = confirm("Sure?");
 
   if (r == true) {
-    s3.deleteObject({ Key: selectedPhoto }, function (err, data) {
+    s3.deleteObject({ Key: selectedFile }, function (err, data) {
       if (err) {
         return console.log(
           "There was an error deleting your photo: ",
@@ -473,7 +510,7 @@ function deletePhoto() {
         );
       }
       console.log("Successfully deleted photo.");
-      $(`#${selectedPhotoId}`).remove();
+      $(`#${selectedFileId}`).remove();
     });
   }
 }
@@ -575,6 +612,25 @@ function dateToNiceString(myDateInput) {
 }
 
 /**
+ * @function fileIsImage
+ * Determines if file extension corresponds to an image.
+ *
+ * @param {string} fileName - Filename (must include extension).
+ * @returns {boolean} true if filename corresponds to a valid image extension (jpg, png, etc.). Return false otherwise.
+ * 
+ */
+function fileIsImage(fileName){
+  const extension = fileName.substring(fileName.length-3, fileName.length);
+  const extension2 = fileName.substring(fileName.length-4, fileName.length);
+  const imageExtensions = ["png","jpg","gif","jpeg","webp"];
+  if (imageExtensions.includes(extension) || imageExtensions.includes(extension2)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
  * @function resizeImage
  * Resizes image
  *
@@ -583,6 +639,7 @@ function dateToNiceString(myDateInput) {
  * @param {number} [newFrameHeight=null] - New height of the image's canvas/frame; if null(default), it will be set to the new height of the image. If newFrameHeight is less than the new height of the image, image will be cropped.
  * @param {number} [newImageHeight=null] - New height of the image; if null (default), new height will be calculated automatically by keeping original ratio.
  * @returns {blob} Promise => either a base64 resized JPEG image in case of resolve, or error in case of rejection.
+ * 
  */
 function resizeImage(
   filePath,
