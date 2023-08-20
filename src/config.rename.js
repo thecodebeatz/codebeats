@@ -5,7 +5,7 @@
 * * - AWS_REGION               =>   AWS region where your DynamoDB table and S3 bucket are located (e.g. us-east-1)
 * ! - AWS_ACCESS_KEY           =>   AWS access keys of user with READ ONLY access to the DynamoDB table and S3 bucket
 * ! - AWS_SECRET_KEY           =>   AWS secret keys of user with READ ONLY access to the DynamoDB table and S3 bucket
-* * - AWS_DYNAMO_TABLE         =>   DynamoDB table where all your blogpost data will be stored
+* * - AWS_DYNAMO_TABLE         =>   DynamoDB table where all your blogpost data will be stored.
 * * - BLOG_SEO_SUBFOLDER       =>   Any subfolder you'd like your blog post articles to show on their URLs (e.g. if you set this to "blogpost/", 
 * *                                 then your blog post will automatically have the following structure https://mysiteurl.com/blogpost/[blogpost-title]/[blogpost-unique-id])
 * * - SITE_CANONICAL_URL       =>   Your site's canonical URL. This is how you want your homepage URL to be displayed on Google (e.g. https://mysiteurl.com/)
