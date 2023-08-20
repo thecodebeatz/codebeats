@@ -34,27 +34,42 @@ class Blogfeed extends React.Component {
             return dateToUnix(b.post_date) - dateToUnix(a.post_date);
         });
 
-        return BlogpostOrdered.map(blogpost => {
-            return ( 
-                    
+        return (
+            <div class="blog-grid">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="blog-list-grid">
+                      {BlogpostOrdered.map(blogpost => (
                         <div className="card-grid-space" key={blogpost.post_folder}>
-                            <Link className="card" to={`/${BLOG_SEO_SUBFOLDER}/${blogpost.post_folder}`} style={{"--bg-img": `url(${blogpost.image})`}}>
-                                <div>
-                                    <h2>{blogpost.title}</h2>
-                                    <p>{blogpost.summary}</p>
-                                    <div className="date">📅 {dateToNiceString(blogpost.post_date)}</div>
-                                    {
-                                    // TODO: Need to fix styling for tags.
-                                    /*                                    
-                                    <div className="tags">
-                                        {blogpost.post_tags.split(",").map(tag => <div className="tag">{tag}</div>)}
-                                    </div> */
-                                    }
-                                </div>
-                            </Link>
+                          <div class="blog-list">
+                            <div class="blog-list-img">
+                              <img src={SITE_CANONICAL_URL + blogpost.image} />
+                            </div>
+                            <div class="blog-list-description">
+                              <span className="blog-list-date">{dateToNiceString(blogpost.post_date)}</span>
+                              <h4>
+                                <Link
+                                  className="card"
+                                  to={`/${BLOG_SEO_SUBFOLDER}/${blogpost.post_folder}`}
+                                >
+                                  {blogpost.title}
+                                </Link>
+                              </h4>
+                              <p>
+                                {blogpost.summary}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                );
-        });
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+
     }
 
     render() {

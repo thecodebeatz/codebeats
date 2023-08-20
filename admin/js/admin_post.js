@@ -93,7 +93,7 @@ function readItem() {
         );
 
         if (data.Item.image != null) {
-          $("#featuredImageSection").append(`<img src="${data.Item.image}" style="width:auto;height:250px" />`);
+          $("#featuredImageSection").append(`<img src="${SITE_CANONICAL_URL+data.Item.image}" style="width:auto;height:250px" />`);
         }
 
 
@@ -263,7 +263,6 @@ function setAsFeaturedImage() {
         Bucket: AWS_S3_BUCKET,
         Key: photoKey,
         Body: featuredImageBase64,
-        ACL: "public-read",
         CacheControl: "public, max-age=31536000",
         ContentType: "image/jpeg",
       },
@@ -274,7 +273,7 @@ function setAsFeaturedImage() {
         // Whenever a file is uploaded, update progress message at the top of the blog post editor.
         success("Featured image successfully uploaded.");
         console.log(fileIsImage);
-        const uploadedImageURL = data.Location;
+        const uploadedImageURL = photoKey;
 
         // Once the image is uploaded, let's also update the blog record to specify the featured image's URL.
         const params = {
@@ -336,7 +335,6 @@ function addPhoto(albumName) {
         Bucket: AWS_S3_BUCKET,
         Key: photoKey,
         Body: files[i],
-        ACL: "public-read",
         CacheControl: "public, max-age=31536000",
       },
     });
